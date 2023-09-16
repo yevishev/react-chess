@@ -1,0 +1,14 @@
+.coordinates {
+    left: 0px;
+    position: absolute;
+    top: 0px;
+    user-select: none;
+}
+.coordinateLight {
+    font-weight: 600;
+    fill: #7a9db2;
+}
+.coordinateDark {
+    font-weight: 600;
+    fill: #c5d5dc;
+}
