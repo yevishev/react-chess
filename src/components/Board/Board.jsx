@@ -3,54 +3,101 @@ import styles from './Board.module.css';
 
 import Coordinates from "./Coordinates/Coordinates";
 
-
+import brPicture from '../../static/img/br.png';
+import bnPicture from '../../static/img/bn.png';
+import bbPicture from '../../static/img/bb.png';
+import bqPicture from '../../static/img/bq.png';
+import bkPicture from '../../static/img/bk.png';
+import bpPicture from '../../static/img/bp.png';
+import wrPicture from '../../static/img/wr.png';
+import wnPicture from '../../static/img/wn.png';
+import wbPicture from '../../static/img/wb.png';
+import wqPicture from '../../static/img/wq.png';
+import wkPicture from '../../static/img/wk.png';
+import wpPicture from '../../static/img/wp.png';
+//
+//let arr = [1,2,3,4,5];
+//let f =  (num) => {
+//    return new Promise(resolve => {
+//        setTimeout(() => {
+//            resolve(num * 2)
+//        }, Math.random() * 2000)
+//    })
+//} //вызывать f только после прохождения таймаута последовательно для к
+//
 
 // type Point = {
 //     x: number,
 //     y: number,
 // }
+//цвет, название, картинка и матрица ходов
+
 
 export default () => {
-
-    const [piecesPlace, setPiecesPlace] = useState([
-        ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
-        ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],
-        ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
-        ['wr', 'wn', 'wb', 'wq', 'wk', 'wb', 'wn', 'wr'],
+    const [boardRect, setBoardRect] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [pieceMap, setPieceMap] = useState([
+        [
+            {'pic' : brPicture,},
+            {'pic' : bnPicture,},
+            {'pic' : bbPicture,},
+            {'pic' : bqPicture,},
+            {'pic' : bkPicture,},
+            {'pic' : bbPicture,},
+            {'pic' : bnPicture,},
+            {'pic' : brPicture,},
+        ],
+        [
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+            {'pic' : bpPicture,},
+        ],
+        [{},{},{},{},{},{},{},{},],
+        [{},{},{},{},{},{},{},{},],
+        [{},{},{},{},{},{},{},{},],
+        [{},{},{},{},{},{},{},{},],
+        [
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            {'pic' : wpPicture,},
+            ],
+        [
+            {'pic' : wrPicture,},
+            {'pic' : wnPicture,},
+            {'pic' : wbPicture,},
+            {'pic' : wqPicture,},
+            {'pic' : wkPicture,},
+            {'pic' : wbPicture,},
+            {'pic' : wnPicture,},
+            {'pic' : wrPicture,},
+        ],
     ]);
-    // const handleDragStart = () => {
-    //     setIsDragging(true);
-    // };
-
-    // // const handleDragEnd = () => {
-    // //     console.log('its end');
-    // //     setIsDragging(false);
-    // // };
 
 
-    // const handleDragEnd = (e) => {
-    //     console.log('its over');
-    //     const rect = e.target.parentNode.getBoundingClientRect();
-    //     const gridSize = rect.width / 8;
-    //     if (isDragging) {
-    //         setPosition({
-    //             //позиция курсора 
-    //             x: Math.floor((e.clientX - rect.left) / gridSize) * gridSize, // Центрирование фигуры под курсором
-    //             y: Math.floor((e.clientY - rect.top) / gridSize) * gridSize,
-    //         });
-    //     }
-    // };
-
-    // const handleDragOver = (e) => {
-    //     e.preventDefault();
-    //     return true;
-    //     // e.preventDefault
-    // }
-
+    useEffect(() => {
+        const board = document.querySelector(`.${styles.board}`);
+        const updateBoardRect = () => {
+            setIsLoading(false);
+            const newRectData = board.getBoundingClientRect();
+            setBoardRect(newRectData);
+            setIsLoading(true);
+        }
+        updateBoardRect();
+        window.addEventListener('resize', updateBoardRect);
+        return () => {
+            window.removeEventListener('resize', updateBoardRect)
+        }
+    }, []);
     /*
         MouseMove - use on window
         MouseUp - use on window
@@ -59,6 +106,8 @@ export default () => {
 
     const handleMouseDown = (e) => {
         const piece = e.target; //piece
+        const board = e.target.parentNode.getBoundingClientRect();
+
         piece.style.left = e.clientX - piece.offsetWidth / 2 + 'px';
         piece.style.top = e.clientY - piece.offsetHeight / 2 + 'px';
         piece.style.position = 'fixed';
@@ -67,26 +116,49 @@ export default () => {
             window.removeEventListener('mousemove', mouseMove);
             window.removeEventListener('mouseup', mouseUp);
 
-            const board = e.target.parentNode.getBoundingClientRect(); //board data
             const gridSize = board.width / 8; //size of single cell
             const pieceOnBoardX = e.clientX - board.left;//current coordinate X (left) - left distance from border screen to board
             const pieceOnBoardY = e.clientY - board.top;//current coordinate Y (top) - top distance from border screen to board
 
-            const pieceX = Math.floor((pieceOnBoardX) / gridSize) * gridSize;
-            const pieceY = Math.floor((pieceOnBoardY) / gridSize) * gridSize;
-            piece.style.left = pieceX + 'px';
-            piece.style.top = pieceY + 'px';
+            if (pieceOnBoardX < 0) {
+                piece.style.left = 0 + '%';
+            } else if (pieceOnBoardX + board.left > board.right) {
+                piece.style.left = 87.5 + '%';
+            } else {
+                const pieceX = Math.floor((pieceOnBoardX) / gridSize) * 100/8;
+                piece.style.left = pieceX.toFixed(2) + '%';
+            }
+
+            if (pieceOnBoardY < 0) {
+                piece.style.top = 0 + '%';
+            } else if (pieceOnBoardY + board.top > board.bottom) {
+                piece.style.top = 87.5 + '%';
+            } else {
+                const pieceY = Math.floor((pieceOnBoardY) / gridSize) * 100/8;
+                piece.style.top = pieceY.toFixed(2) + '%';
+            }
 
             piece.style.position = 'absolute';           
         }
-        
+
         const mouseMove = (e) => {
             const onMovePieceX = e.clientX - piece.offsetWidth / 2;
             const onMovePieceY = e.clientY - piece.offsetHeight / 2;
-            piece.style.left = onMovePieceX + 'px';
-            piece.style.top = onMovePieceY + 'px';
+            if (onMovePieceX >= (board.right - piece.offsetWidth)) {
+                piece.style.left = board.right - piece.offsetWidth + 'px';
+            } else if (onMovePieceX <= board.left) {
+                piece.style.left = board.left + 'px';
+            } else {
+                piece.style.left = onMovePieceX + 'px';
+            }
 
-
+            if (onMovePieceY >= (board.bottom - piece.offsetWidth)) {
+                piece.style.top = board.bottom - piece.offsetWidth + 'px';
+            } else if (onMovePieceY <= board.top) {
+                piece.style.top = board.top + 'px';
+            } else {
+                piece.style.top = onMovePieceY + 'px';
+            }
         }
         
         window.addEventListener('mousemove', mouseMove)
@@ -94,23 +166,29 @@ export default () => {
 
     }
 
-    const setPiecesOnBoard = () => {
-        return (
-            <div className={`${styles.piece} ${styles.wk}`} onMouseDown={handleMouseDown}/>
-        )
-    }
-
     return (
         <div className={styles.board}>
             <Coordinates />
-            {setPiecesOnBoard()}
-            {/* <div className={`${styles.piece} ${styles.wk}`} onMouseDown={handleMouseDown}/> */}
+            {isLoading &&
+            pieceMap.map((pieces, rowIndex) => {
+                return pieces.map((value, columnIndex) => {
+                    if ('pic' in value) {
+                        return (
+                            <div
+                                key={`${rowIndex}-${columnIndex}`}
+                                style= {{
+                                    backgroundImage: `url("${value.pic}")`,
+                                    left: `${columnIndex * 12.5}%`,
+                                    top: `${rowIndex * 12.5}%`
+                                }}
+                                className={`${styles.piece}`}
+                                onMouseDown={handleMouseDown} />
+                                );
+                    } else {
+                        return null;
+                    }
+             })
+        })}
         </div>
     )
 }
-
-/*
-
-                className={`${styles.piece}${isDragging ? styles.dragging : ''}`}
-                style={{ left: position.x, top: position.y }}
-*/

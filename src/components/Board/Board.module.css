@@ -45,24 +45,6 @@
     cursor: pointer;
     transition: transform 0.2s;
 }
-.wk {
-    background-image: url('../../static/img/wk.png');
-}
-.wr {
-    background-image: url('../../static/img/wr.png');
-}
-.wq {
-    background-image: url('../../static/img/wq.png');
-}
-.wp {
-    background-image: url('../../static/img/wp.png');
-}
-.wn {
-    background-image: url('../../static/img/wn.png');
-}
-.wb {
-    background-image: url('../../static/img/wb.png');
-}
 /* Стили для фигуры во время перетаскивания */
 .dragging {
   opacity: 0.7; /* Снижаем прозрачность фигуры при перетаскивании */
