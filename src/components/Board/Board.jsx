@@ -48,7 +48,10 @@ export default () => {
             {'pic' : brPicture,},
         ],
         [
-            {'pic' : bpPicture,},
+            {
+                'pic' : bpPicture,
+//                'movement' : pawnMovement,
+            },
             {'pic' : bpPicture,},
             {'pic' : bpPicture,},
             {'pic' : bpPicture,},
@@ -107,7 +110,6 @@ export default () => {
     const handleMouseDown = (e) => {
         const piece = e.target; //piece
         const board = e.target.parentNode.getBoundingClientRect();
-
         piece.style.left = e.clientX - piece.offsetWidth / 2 + 'px';
         piece.style.top = e.clientY - piece.offsetHeight / 2 + 'px';
         piece.style.position = 'fixed';
@@ -122,23 +124,32 @@ export default () => {
 
             if (pieceOnBoardX < 0) {
                 piece.style.left = 0 + '%';
+                piece.dataset.column = '0';
             } else if (pieceOnBoardX + board.left > board.right) {
                 piece.style.left = 87.5 + '%';
+                piece.dataset.column = '7';
             } else {
                 const pieceX = Math.floor((pieceOnBoardX) / gridSize) * 100/8;
-                piece.style.left = pieceX.toFixed(2) + '%';
+                const pieceXtoFixed = pieceX.toFixed(1); 
+                piece.style.left = pieceXtoFixed + '%';
+                piece.dataset.column = (pieceXtoFixed / 12.5).toString();
             }
 
             if (pieceOnBoardY < 0) {
                 piece.style.top = 0 + '%';
+                piece.dataset.row = '0';
             } else if (pieceOnBoardY + board.top > board.bottom) {
                 piece.style.top = 87.5 + '%';
+                piece.dataset.row = '7';
             } else {
                 const pieceY = Math.floor((pieceOnBoardY) / gridSize) * 100/8;
-                piece.style.top = pieceY.toFixed(2) + '%';
+                const pieceYtoFixed = pieceY.toFixed(1); 
+                piece.style.top = pieceYtoFixed + '%';
+                piece.dataset.row = (pieceYtoFixed / 12.5).toString();
             }
 
-            piece.style.position = 'absolute';           
+            piece.style.position = 'absolute';       
+            console.log(piece.dataset.row, piece.dataset.column);    
         }
 
         const mouseMove = (e) => {
@@ -164,6 +175,7 @@ export default () => {
         window.addEventListener('mousemove', mouseMove)
         window.addEventListener('mouseup', mouseUp)
 
+
     }
 
     return (
@@ -176,6 +188,8 @@ export default () => {
                         return (
                             <div
                                 key={`${rowIndex}-${columnIndex}`}
+                                data-row={rowIndex}
+                                data-column={columnIndex}
                                 style= {{
                                     backgroundImage: `url("${value.pic}")`,
                                     left: `${columnIndex * 12.5}%`,
@@ -184,8 +198,6 @@ export default () => {
                                 className={`${styles.piece}`}
                                 onMouseDown={handleMouseDown} />
                                 );
-                    } else {
-                        return null;
                     }
              })
         })}
